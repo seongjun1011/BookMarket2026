@@ -4,16 +4,15 @@ import kr.ac.kopo.psjjj.bookmarket.domain.Book;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class BookRepositoryImpl implements BookRepository{
-    private List<Book> listofBooks = new ArrayList<Book>();
+    private List<Book> listOfBooks = new ArrayList<Book>();
 
     public BookRepositoryImpl() {
         Book book1 = new Book();
-        book1.setBookId("book11");
+        book1.setBookId("isbn11");
         book1.setName("데미안");
         book1.setUnitPrice(new BigDecimal(7200));
         book1.setAuthor("헤르만 헤세");
@@ -24,7 +23,7 @@ public class BookRepositoryImpl implements BookRepository{
         book1.setReleaseDate("2000 / 12 / 20");
 
         Book book2 = new Book();
-        book2.setBookId("book22");
+        book2.setBookId("isbn22");
         book2.setName("코스모스");
         book2.setUnitPrice(new BigDecimal(19800));
         book2.setAuthor("칼 세이건");
@@ -35,7 +34,7 @@ public class BookRepositoryImpl implements BookRepository{
         book2.setReleaseDate("2006 / 12 / 20");
 
         Book book3 = new Book();
-        book3.setBookId("book33");
+        book3.setBookId("isbn33");
         book3.setName("논어");
         book3.setUnitPrice(new BigDecimal(10800));
         book3.setAuthor("공자");
@@ -45,14 +44,74 @@ public class BookRepositoryImpl implements BookRepository{
         book3.setUnitsInStock(1000);
         book3.setReleaseDate("2018 / 10 / 01");
 
-        listofBooks.add(book1);
-        listofBooks.add(book2);
-        listofBooks.add(book3);
+        listOfBooks.add(book1);
+        listOfBooks.add(book2);
+        listOfBooks.add(book3);
     }
 
     @Override
     public List<Book> getAllBookList(){
-        return listofBooks;
+        return listOfBooks;
+    }
+
+    @Override
+    public Book getBookById(String bookId) {
+        Book book = null;
+        for(Book searchBook: listOfBooks){
+            if (searchBook != null && searchBook.getBookId() != null && searchBook.getBookId().equals(bookId)){
+                book = searchBook;
+                break;
+            }
+        }
+
+        if(book == null){
+            throw new IllegalArgumentException("도서ID가 " + bookId + "인 도서를 찾을 수 없습니다.");
+        }
+
+        return book;
+    }
+
+    @Override
+    public List<Book> getBookListByCategory(String category) {
+        List<Book> booksByCategory = new ArrayList<Book>();
+        for(Book searchBook : listOfBooks) {
+            if (category.equalsIgnoreCase(searchBook.getCategory()))
+                booksByCategory.add(searchBook);
+
+        }
+        return booksByCategory;
+    }
+
+    @Override
+    public Set<Book> getBookListByFilter(Map<String, List<String>> filter) {
+        Set<Book> booksByCategory = new HashSet<Book>();
+        Set<Book> booksByPublisher = new HashSet<Book>();
+        Set<String> filterKeys = filter.keySet();
+
+
+        if (filterKeys.contains("publisher")) {
+            for (String publisherName : filter.get("publisher")) {
+                for (Book searchBook : listOfBooks) {
+                    if (publisherName.equalsIgnoreCase(searchBook.getPublisher())) {
+                        booksByPublisher.add(searchBook);
+                    }
+                }
+            }
+        }
+
+        // 2. 카테고리(category) 필터링
+        if (filterKeys.contains("category")) {
+            for (String category : filter.get("category")) {
+                List<Book> list = getBookListByCategory(category);
+                booksByCategory.addAll(list);
+            }
+        }
+
+
+
+        booksByCategory.retainAll(booksByPublisher);
+
+        return booksByCategory;
     }
 }
 
