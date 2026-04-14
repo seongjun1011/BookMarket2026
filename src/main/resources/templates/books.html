@@ -15,8 +15,9 @@
                 <span class="fs-4">BookMarket</span>
             </a>
             <nav>
-                <a th:href="@{/books/IT전문서}" class="nav-link d-inline">IT전문서</a>&nbsp;&nbsp;
-                <a th:href="@{/books/IT교육교재}" class="nav-link d-inline">IT교육교재</a>
+                <a th:href="@{/books/문학}" class="nav-link d-inline">문학</a>&nbsp;&nbsp;
+                <a th:href="@{/books/동양철학}" class="nav-link d-inline">동양철학</a>
+                <a th:href="@{/books/우주과학}" class="nav-link d-inline">우주과학</a>
             </nav>
         </div>
     </header>
@@ -31,7 +32,7 @@
     <div class="row align-items-md-stretch text-center">
         <div class="col-md-4 mb-4" th:each="book : ${bookList}">
             <div class="h-100 p-3 border rounded-3">
-                <img th:src="@{/imgs/book_icon.png}" alt="image" style="width: 60%" />
+                <img th:src="@{/imgs/book_icon.png} "width="50" height="50"/>
 
                 <h3 th:text="${book.name}">도서명</h3>
                 <p th:text="${book.author}"></p>
