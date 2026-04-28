@@ -35,5 +35,10 @@ public class BookServiceImpl implements BookService {
         Set<Book> booksByFilter = bookRepository.getBookListByFilter(filter);
         return booksByFilter;
     }
+
+    @Override
+    public void setNewBook(Book book) {
+        bookRepository.setNewBook(book);
+    }
 }
 
