@@ -12,7 +12,7 @@
     <div class="container py-4">
         <header class="pb-3 mb-4 border-bottom">
             <a href="/BookMarket/home" class="d-flex align-items-center text-body-emphasis text-decoration-none">
-                <img src="/BookMarket/imgs/book_icon.png">&nbsp;&nbsp;
+                <img th:src="@{/imgs/book_icon.png}" width="50" height="50" >&nbsp;&nbsp;
                 <span class="fs-4">BookMarket</span>
             </a>
         </header>
@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="row align-items-md-stretch">
-            <form action="/BookMarket/books/add" method="post" th:object="${book}">
+            <form action="/BookMarket/books/add" method="post" enctype="multipart/form-data">
                 <legend th:text="${addTitle}"></legend>
                 <div class="mb-3 row">
                     <label class="col-sm-2 control-label">도서 ID</label>
@@ -98,6 +98,12 @@
                         <input type="radio" name="condition" value="New"/> 신규도서
                         <input type="radio" name="condition" value="Old"/> 중고도서
                         <input type="radio" name="condition" value="E-Book"/> 전자책
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 control-label">도서이미지</label>
+                    <div class="col-sm-7">
+                        <input type="file" name="bookImage" class="form-control"/>
                     </div>
                 </div>
                 <div class="mb-3 row">

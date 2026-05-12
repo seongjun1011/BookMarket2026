@@ -1,13 +1,17 @@
 package kr.ac.kopo.psjjj.bookmarket.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import kr.ac.kopo.psjjj.bookmarket.domain.Book;
 import kr.ac.kopo.psjjj.bookmarket.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +21,9 @@ import java.util.Set;
 public class BookController {
     @Autowired
     private BookService bookService;
+
+    @Value("${file.uploadDir}")
+    String fileDir;
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -50,7 +57,21 @@ public class BookController {
     }
 
     @PostMapping("/add")
-    public String submitAddNewBook(@ModelAttribute Book book){
+    public String submitAddNewBook(@ModelAttribute("book") Book book) {
+        MultipartFile bookImage = book.getBookImage(); // Book 객체 내부의 MultipartFile 필드 호출
+
+        if (bookImage != null && !bookImage.isEmpty()) {
+            String saveName = bookImage.getOriginalFilename();
+            File saveFile = new File(fileDir, saveName);
+
+            try {
+                bookImage.transferTo(saveFile); // 실제 D드라이브에 저장
+                book.setFileName(saveName);    // DB에 저장될 파일명 필드에 세팅
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         bookService.setNewBook(book);
         return "redirect:/books";
     }
@@ -67,6 +88,8 @@ public class BookController {
         modelAndView.setViewName("books");
         return modelAndView;
     }
+
+
 
     @GetMapping("/add")
     public String requestAddBookForm() {
