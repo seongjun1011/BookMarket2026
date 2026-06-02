@@ -1,5 +1,5 @@
 package kr.ac.kopo.psjjj.bookmarket.validator;
-
+// 테스트
 import kr.ac.kopo.psjjj.bookmarket.domain.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
