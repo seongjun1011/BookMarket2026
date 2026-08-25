@@ -1,6 +1,10 @@
 package kr.ac.kopo.psjjj.bookmarket.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jdk.jfr.Category;
+import kr.ac.kopo.psjjj.bookmarket.exception.BookIdException;
+import kr.ac.kopo.psjjj.bookmarket.exception.CategoryException;
 import kr.ac.kopo.psjjj.bookmarket.validator.UnitsInStockValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
@@ -45,6 +49,9 @@ public class BookController {
     @GetMapping("/{category}")
     public String requestBooksByCategory(@PathVariable("category") String category, Model model){
         List<Book> booksByCategory = bookService.getBookListByCategory(category);
+        // 카테고리를 존재하지 않으며 강제로 CategoryException을 발생
+        if(booksByCategory == null || booksByCategory.isEmpty())
+            throw new CategoryException();
         model.addAttribute("bookList", booksByCategory);
         return "books";
     }
@@ -138,4 +145,15 @@ public class BookController {
     public String requestAddBookForm() {
         return "addBook";
     }
+
+    @ExceptionHandler(value = {BookIdException.class})
+    public ModelAndView handleError(HttpServletRequest request, BookIdException exception){
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("invalidBookId", exception.getBookId());
+        mav.addObject("exception", exception);
+        mav.addObject("url", request.getRequestURL()+"?"+request.getQueryString());
+        mav.setViewName("errorBookId");
+        return mav;
+    }
 }
+
