@@ -13,11 +13,12 @@ public class ResourceConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 경로 끝에 슬래시(/) 보장 처리
         String location = fileDir.endsWith("/") ? fileDir : fileDir + "/";
 
         registry.addResourceHandler("/imgs/**")
-                .addResourceLocations("file:///" + location) // 슬래시 3개(file:///) 필수
+                // 1순위: 프로젝트 내 static/imgs/ 폴더 (book.png 등 기본 이미지)
+                // 2순위: 외부 파일 업로드 경로 (사용자가 업로드한 파일)
+                .addResourceLocations("classpath:/static/imgs/", "file:///" + location)
                 .setCachePeriod(3600);
     }
 }
