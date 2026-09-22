@@ -1,6 +1,5 @@
 package kr.ac.kopo.psjjj.bookmarket.domain;
 
-
 import lombok.Data;
 import lombok.ToString;
 
@@ -24,6 +23,7 @@ public class Cart {
         this();
         this.cartId = cartId;
     }
+
     public void updateGrandTotal(){
         grandTotal = new BigDecimal(0);
         for (CartItem item: cartItems.values()){
@@ -42,6 +42,13 @@ public class Cart {
             cartItems.put(bookId, item);
         }
 
+        updateGrandTotal();
+    }
+
+    // ⭐ 추가된 부분 ⭐
+    public void removeCartItem(CartItem item) {
+        String bookId = item.getBook().getBookId();
+        cartItems.remove(bookId);
         updateGrandTotal();
     }
 }
